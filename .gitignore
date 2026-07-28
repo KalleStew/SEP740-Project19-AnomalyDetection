@@ -11,8 +11,13 @@ data/raw/*
 !data/raw/kddcup.data_10_percent_corrected
 !data/raw/kddcup.names
 !data/raw/training_attack_types
-data/processed/
-models/
+data/processed/*
+!data/processed/test.csv
+!data/processed/train.csv
+!data/processed/X_train.npy
+!data/processed/X_test.npy
+!data/processed/y_train.npy
+!data/processed/y_test.npyS
 results/
 
 # Jupyter Notebook checkpoints
