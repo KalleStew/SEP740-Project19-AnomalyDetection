@@ -1,84 +1,95 @@
-# SEP740 Project 19: Anomaly Detection Using Autoencoders
+SEP740 Project 19: Anomaly Detection Using Autoencoders
 
-## Project Overview
-This repository contains the codebase for SEP740 Project 19. The objective is to develop an anomaly detection system using autoencoder neural networks trained on the KDD Cup 1999 dataset to identify anomalous network traffic (cyberattacks).
+1. Project Overview
 
-## Documentation
-The following documents support Phase 1 collaboration and reproducibility:
+This project detects anomalous network traffic using an autoencoder trained on the KDD Cup 1999 dataset.
+The repository now uses shared preprocessing utilities in src/data_preprocessing.py and notebook entry points
+that all resolve paths from the repository root.
 
-- [CONTRIBUTING](CONTRIBUTING.md) - team workflow, branching, commit, and review guidance.
-- [Data Dictionary](data/DATA_DICTIONARY.md) - feature reference for the KDD Cup 1999 dataset.
-- [Phase 1 Notes](docs/PHASE1_NOTES.md) - scope, assumptions, and open items for the first project phase.
-- [EDA Notebook](notebooks/01_eda.ipynb) - exploratory analysis for the raw KDD99 data.
+2. Dataset Download Instructions
 
-## Prerequisites & Setup
-1. Clone this repository to your local machine.
-2. Ensure you have Python 3.9+ installed.
-3. Create and activate a virtual environment:
-    ```
-    python -m venv venv
-    source venv/bin/activate  # On Windows use: venv\Scripts\activate
-    ```
-4. Install dependencies:
-    ```
-    pip install -r requirements.txt
-    ```
+The project expects the KDD Cup 1999 files in data/raw/.
 
-## Dataset Instructions
-1. The repository now keeps the metadata files used by the EDA workflow in `data/raw/`: `kddcup.names` for column initialization and `training_attack_types` for attack-family grouping.
-2. The repository also keeps `kddcup.data_10_percent_corrected`, which is the default raw file used by [notebooks/01_eda.ipynb](notebooks/01_eda.ipynb).
-3. Other raw exports can still be stored locally under `data/raw/`, but they remain ignored by default.
-4. If you are using a different raw export, update the notebook path in [notebooks/01_eda.ipynb](notebooks/01_eda.ipynb) accordingly.
+Required files:
+- data/raw/kddcup.data_10_percent_corrected
+- data/raw/kddcup.names
+- data/raw/training_attack_types
 
-## How to Run the Code
-To replicate the results outlined in our final report, execute the scripts in the following order:
+Optional fallback file:
+- data/raw/kddcup.data_10_percent
 
-For exploratory analysis, start with [notebooks/01_eda.ipynb](notebooks/01_eda.ipynb). The notebook now:
+Steps:
+1. Download the KDD Cup 1999 dataset from the UCI Machine Learning Repository.
+2. Place kddcup.data_10_percent_corrected in data/raw/.
+3. Place kddcup.names in data/raw/.
+4. Place training_attack_types in data/raw/.
+5. If the corrected file is unavailable, place kddcup.data_10_percent in data/raw/ and update the notebook path if needed.
 
-- loads column names from `data/raw/kddcup.names`
-- groups attack labels with `data/raw/training_attack_types`
-- analyzes class imbalance, attack families, zero-variance features, skewness, outliers, and categorical cardinality
+3. Environment Setup
 
-1. **Preprocess the data:**
-   `python src/data_preprocessing.py`
-   *(Cleans, normalizes, and splits the data into `data/processed/`)*
+Recommended Python version: 3.11
 
-2. **Train the Autoencoder:**
-   `python src/train.py`
-   *(Trains the baseline model and saves weights to `models/`)*
+Steps:
+1. Create and activate a virtual environment.
+   - macOS / Linux:
+     python -m venv venv
+     source venv/bin/activate
+   - Windows:
+     python -m venv venv
+     venv\Scripts\activate
+2. Install dependencies.
+   pip install -r requirements.txt
+3. If you are running the notebooks in VS Code, select the venv kernel before executing cells.
 
-3. **Evaluate the Model:**
-   `python src/evaluate.py`
-   *(Generates Precision, Recall, and F1 scores, and saves reconstruction error plots to `results/`)*
+4. Repository Data Flow
 
----
+The intended execution flow is:
+1. notebooks/00_base_eda.ipynb
+   - Loads the raw KDD metadata and inspects the dataset structure.
+2. notebooks/01_data_processing_eda.ipynb
+   - Uses src/data_preprocessing.py to clean the raw dataset.
+   - Creates the processed train/test splits in data/processed/.
+3. notebooks/02_BaselineModelDevelopment.ipynb
+   - Loads the processed arrays and trains the baseline autoencoder.
+4. notebooks/03_HyperparameterOptimization_v1.ipynb
+   - Runs the first hyperparameter search workflow.
+5. notebooks/03_HyperparameterOptimization_v2.ipynb
+   - Runs the second hyperparameter search workflow.
+6. notebooks/03_HyperparameterOptimization_v3.ipynb
+   - Runs the final hyperparameter search workflow used for the report.
+7. notebooks/04_Evaluation_Visualization.ipynb
+   - Loads the trained model and generates the evaluation metrics and plots.
 
-## Group Git Workflow Guide
+5. How to Reproduce the Results
 
-To prevent code conflicts and lost work, our team follows a **Feature Branch Workflow**. Please adhere to these steps when contributing to the project:
+Execute the notebooks in this order:
+1. Run notebooks/00_base_eda.ipynb to confirm the raw files are available.
+2. Run notebooks/01_data_processing_eda.ipynb to clean the data and export the processed arrays.
+3. Run notebooks/02_BaselineModelDevelopment.ipynb to train the baseline model.
+4. Run notebooks/03_HyperparameterOptimization_v1.ipynb if you want to review the first tuning pass.
+5. Run notebooks/03_HyperparameterOptimization_v2.ipynb if you want to review the second tuning pass.
+6. Run notebooks/03_HyperparameterOptimization_v3.ipynb to reproduce the final tuning workflow.
+7. Run notebooks/04_Evaluation_Visualization.ipynb to compute the final anomaly metrics and save plots.
 
-### 1. Never work directly on the `main` branch.
-The `main` branch should only contain working, tested code. 
+6. Output Locations
 
-### 2. Create a branch for your task.
-Before starting new work, pull the latest changes and create a branch:
-    ```
-    git checkout main
-    git pull origin main
-    git checkout -b feature/your-feature-name
-    ```
-*(Use prefixes like `feature/`, `bugfix/`, or `docs/` for clarity).*
+Generated artifacts are written to:
+- data/processed/ for train/test arrays and tabular exports
+- data/clean/ for cleaned CSV output from preprocessing
+- models/ for saved Keras model files
+- results/ for evaluation plots and metrics
 
-### 3. Commit your changes regularly.
-Write clear, descriptive commit messages:
-    ```
-    git add .
-    git commit -m "Add normalization logic to data_preprocessing.py"
-    ```
+7. Reproducibility Notes
 
-### 4. Push and create a Pull Request (PR).
-When your code is ready, push your branch to GitHub:
-    ```
-    git push origin feature/your-feature-name
-    ```
-Go to GitHub, open a Pull Request against the `main` branch, and tag at least one team member to review your code. Once approved, it will be merged into `main`.
+1. The notebooks set NumPy and TensorFlow seeds for reproducibility.
+2. The shared preprocessing module normalizes column names, handles missing values, and saves cleaned data deterministically.
+3. Path resolution should go through the repository root rather than hardcoded working-directory assumptions.
+4. If you change the data file location, update the DATA_PATH values in the EDA notebooks accordingly.
+
+8. Recommended Validation
+
+After running the notebooks, verify that:
+1. data/processed/X_train.npy and data/processed/X_test.npy exist.
+2. models/ contains the saved .keras autoencoder file.
+3. results/ contains the evaluation plots and metrics text file.
+4. The evaluation notebook reports stable accuracy, precision, recall, and F1 values when rerun with the same seed.
