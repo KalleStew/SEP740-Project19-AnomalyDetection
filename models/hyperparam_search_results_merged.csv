@@ -1,0 +1,2 @@
+number,value,datetime_start,datetime_complete,duration,params_activation_decoder,params_activation_encoder,params_batch_size,params_dropout_rate,params_hidden_units,params_latent_dim,params_learning_rate,params_n_hidden_layers,user_attrs_best_epoch,state
+0,0.19096790254116058,2026-07-29 18:17:19.390037,2026-07-29 18:17:24.165701,0 days 00:00:04.775664,sigmoid,relu,64,0.3,128,16,0.001,3,5,COMPLETE
