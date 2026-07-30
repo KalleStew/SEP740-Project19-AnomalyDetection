@@ -1,4 +1,29 @@
-"""Evaluation helpers for the autoencoder-based anomaly detector."""
+"""Evaluation helpers for the autoencoder-based anomaly detector.
+
+Anomaly detection methodology
+------------------------------
+Anomalies are identified using a **reconstruction-error threshold**, a
+standard technique for autoencoder-based anomaly detection (Sakurada &
+Yairi, 2014; An & Cho, 2015, "Variational Autoencoder based Anomaly
+Detection using Reconstruction Probability"):
+
+1. The trained autoencoder reconstructs each input sample
+   (`calculate_reconstruction_error`), and the mean squared error between the
+   input and its reconstruction is used as an anomaly score.
+2. A decision threshold is calibrated from the error distribution on the
+   *training* set (normal traffic only), typically at a high percentile
+   (e.g., the 95th percentile) of that distribution
+   (`select_anomaly_threshold`). This threshold represents "how much
+   reconstruction error is typical for normal traffic."
+3. Any test sample whose reconstruction error exceeds this threshold is
+   classified as an anomaly (`predict_anomalies`), since it deviates further
+   from the model's learned notion of "normal" than almost all of the
+   training data did.
+
+Classification metrics (accuracy, precision, recall, F1-score) are computed
+with scikit-learn (Pedregosa et al., 2011, "Scikit-learn: Machine Learning in
+Python", JMLR 12).
+"""
 
 from __future__ import annotations
 

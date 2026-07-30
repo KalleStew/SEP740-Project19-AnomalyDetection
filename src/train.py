@@ -1,4 +1,22 @@
-"""Training utilities for the autoencoder anomaly detection pipeline."""
+"""Training utilities for the autoencoder anomaly detection pipeline.
+
+Methodology
+-----------
+The autoencoder is trained in an unsupervised fashion, using only *normal*
+network traffic as both the model input and the reconstruction target
+(``model.fit(x=X_train, y=X_train, ...)``). No attack traffic is used during
+training. This is the defining characteristic of the reconstruction-based
+anomaly-detection approach used throughout this project: because the model
+never sees attacks during training, it learns a latent representation that is
+specialized to normal traffic and therefore reconstructs attacks poorly. The
+resulting per-sample reconstruction error is later converted into a binary
+anomaly decision in ``src/evaluate.py``.
+
+Training minimizes mean squared reconstruction error using the Adam optimizer
+(Kingma & Ba, 2014, "Adam: A Method for Stochastic Optimization"), a standard
+choice for training deep neural networks due to its adaptive per-parameter
+learning rates.
+"""
 
 from __future__ import annotations
 
@@ -98,6 +116,10 @@ def compile_autoencoder(model: tf.keras.Model, learning_rate: float = 1e-3) -> t
 	"""
 
 	optimizer = tf.keras.optimizers.Adam(learning_rate=learning_rate)
+	# Mean squared error (MSE) is the standard reconstruction loss for
+	# continuous, standardized features: it directly measures how far the
+	# reconstructed sample is from the original, which is exactly the
+	# quantity later used as the anomaly score.
 	model.compile(optimizer=optimizer, loss="mse")
 	return model
 
@@ -150,6 +172,9 @@ def train_autoencoder(
 	)
 	model = compile_autoencoder(model, learning_rate=learning_rate)
 
+	# The autoencoder is self-supervised: the training target ("y") is the
+	# input itself ("x"), so the model is optimized purely to reconstruct
+	# normal traffic. No labels are used at any point during training.
 	fit_kwargs: dict[str, Any] = {
 		"x": X_train,
 		"y": X_train,

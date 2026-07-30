@@ -1,4 +1,24 @@
-"""Model definitions for the anomaly detection autoencoder pipeline."""
+"""Model definitions for the anomaly detection autoencoder pipeline.
+
+Architecture and methodology references
+----------------------------------------
+The autoencoder architecture implemented here (a symmetric, fully connected
+encoder-decoder pair with a low-dimensional latent bottleneck) follows the
+standard deep-autoencoder design introduced by Hinton & Salakhutdinov (2006),
+"Reducing the Dimensionality of Data with Neural Networks", Science, 313(5786).
+
+Using reconstruction error from such an autoencoder as an anomaly score is a
+well-established technique in the anomaly-detection literature (e.g.,
+Sakurada & Yairi, 2014, "Anomaly Detection Using Autoencoders with Nonlinear
+Dimensionality Reduction"). The model is trained exclusively on normal
+traffic, so it learns to reconstruct normal patterns accurately; samples that
+the trained model reconstructs poorly (i.e., attacks it has never seen) are
+flagged as anomalous. The actual thresholding logic that turns reconstruction
+error into a binary anomaly decision lives in ``src/evaluate.py``.
+
+The model is built with the Keras functional/subclassing API on top of
+TensorFlow (Abadi et al., 2016; Chollet, 2015).
+"""
 
 from __future__ import annotations
 
@@ -56,6 +76,9 @@ def build_autoencoder(
     if not 0.0 <= dropout_rate < 1.0:
         raise ValueError("dropout_rate must be in the range [0, 1).")
 
+    # Encoder: progressively compresses the input down to `latent_dim`. This
+    # bottleneck forces the network to learn a compact representation that
+    # captures the dominant patterns in normal traffic.
     encoder = Sequential(name="encoder")
     encoder.add(layers.InputLayer(shape=(input_dim,)))
     for _ in range(n_hidden_layers):
@@ -65,6 +88,9 @@ def build_autoencoder(
                 encoder.add(layers.Dropout(dropout_rate))
     encoder.add(layers.Dense(latent_dim, activation=activation_encoder))
 
+    # Decoder: mirrors the encoder to reconstruct the original input from the
+    # latent representation. Reconstruction quality on unseen data is what
+    # drives the anomaly score at evaluation time (see src/evaluate.py).
     decoder = Sequential(name="decoder")
     for _ in range(n_hidden_layers):
         for units in reversed(hidden_units):

@@ -1,4 +1,16 @@
-"""Data loading and preprocessing utilities for the anomaly detection pipeline."""
+"""Data loading and preprocessing utilities for the anomaly detection pipeline.
+
+These utilities are designed to operate on the KDD Cup 1999 network
+intrusion detection dataset (Stolfo, S. J., Fan, W., Lee, W., Prodromidis,
+A., & Chan, P. K., 1999; distributed via the UCI Machine Learning
+Repository), but the cleaning logic itself (whitespace normalization,
+missing-value handling, imputation, and encoding) is dataset-agnostic and
+reusable for other tabular datasets.
+
+Imputation (`sklearn.impute.SimpleImputer`) and categorical encoding
+(`sklearn.preprocessing.OrdinalEncoder`) are implemented with scikit-learn
+(Pedregosa et al., 2011).
+"""
 
 from __future__ import annotations
 
