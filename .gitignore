@@ -11,9 +11,7 @@ data/raw/*
 data/processed/*
 legacy/
 results/
+data/.DS_Store
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
-
-# DS_Store
-.DS_Store
