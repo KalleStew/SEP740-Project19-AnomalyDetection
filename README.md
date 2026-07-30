@@ -1,12 +1,12 @@
-SEP740 Project 19: Anomaly Detection Using Autoencoders
+# SEP740 Project 19: Anomaly Detection Using Autoencoders
 
-1. Project Overview
+## 1. Project Overview
 
 This project detects anomalous network traffic using an autoencoder trained on the KDD Cup 1999 dataset.
 The repository now uses shared preprocessing utilities in src/data_preprocessing.py and notebook entry points
 that all resolve paths from the repository root.
 
-2. Dataset Download Instructions
+## 2. Dataset Download Instructions
 
 The project expects the KDD Cup 1999 files in data/raw/.
 
@@ -25,7 +25,7 @@ Steps:
 4. Place training_attack_types in data/raw/.
 5. If the corrected file is unavailable, place kddcup.data_10_percent in data/raw/ and update the notebook path if needed.
 
-3. Environment Setup
+## 3. Environment Setup
 
 Recommended Python version: 3.11
 
@@ -41,7 +41,7 @@ Steps:
    pip install -r requirements.txt
 3. If you are running the notebooks in VS Code, select the venv kernel before executing cells.
 
-4. Repository Data Flow
+## 4. Repository Data Flow
 
 The intended execution flow is:
 1. notebooks/00_base_eda.ipynb
@@ -60,7 +60,7 @@ The intended execution flow is:
 7. notebooks/04_Evaluation_Visualization.ipynb
    - Loads the trained model and generates the evaluation metrics and plots.
 
-5. How to Reproduce the Results
+## 5. How to Reproduce the Results
 
 Execute the notebooks in this order:
 1. Run notebooks/00_base_eda.ipynb to confirm the raw files are available.
@@ -71,7 +71,7 @@ Execute the notebooks in this order:
 6. Run notebooks/03_HyperparameterOptimization_v3.ipynb to reproduce the final tuning workflow.
 7. Run notebooks/04_Evaluation_Visualization.ipynb to compute the final anomaly metrics and save plots.
 
-6. Output Locations
+## 6. Output Locations
 
 Generated artifacts are written to:
 - data/processed/ for train/test arrays and tabular exports
@@ -79,14 +79,14 @@ Generated artifacts are written to:
 - models/ for saved Keras model files
 - results/ for evaluation plots and metrics
 
-7. Reproducibility Notes
+## 7. Reproducibility Notes
 
 1. The notebooks set NumPy and TensorFlow seeds for reproducibility.
 2. The shared preprocessing module normalizes column names, handles missing values, and saves cleaned data deterministically.
 3. Path resolution should go through the repository root rather than hardcoded working-directory assumptions.
 4. If you change the data file location, update the DATA_PATH values in the EDA notebooks accordingly.
 
-8. Recommended Validation
+## 8. Recommended Validation
 
 After running the notebooks, verify that:
 1. data/processed/X_train.npy and data/processed/X_test.npy exist.
