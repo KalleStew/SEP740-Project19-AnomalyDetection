@@ -16,7 +16,7 @@ Required files:
 - `data/raw/training_attack_types`
 
 Steps:
-1. Download the KDD Cup 1999 dataset from the UCI Machine Learning Repository: <http://kdd.ics.uci.edu/databases/kddcup99/kddcup99.html>.
+1. Download the KDD Cup 1999 dataset from the UCI Machine Learning Repository or Keagle: <http://kdd.ics.uci.edu/databases/kddcup99/kddcup99.html> | <https://www.kaggle.com/datasets/galaxyh/kdd-cup-1999-data>
 2. Download `kddcup.data_10_percent.gz`, decompress it, and save it as `data/raw/kddcup.data_10_percent_corrected`.
 3. Download `kddcup.names` and place it at `data/raw/kddcup.names`.
 4. Download `training_attack_types` and place it at `data/raw/training_attack_types`.

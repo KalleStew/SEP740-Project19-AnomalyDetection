@@ -158,7 +158,11 @@ def plot_reconstruction_error_distribution(
 	threshold: float,
 	save_path: Optional[Path] = None,
 ) -> None:
-	"""Plot histogram of reconstruction errors for train and test sets.
+	"""Plot histogram of reconstruction errors for normal vs. attack traffic.
+
+	Normal traffic is the union of the training errors (normal-only, used to
+	calibrate the threshold) and the normal portion of the test set. Attack
+	traffic is the anomalous portion of the test set.
 
 	Args:
 		train_errors: Reconstruction errors from training data.
@@ -169,16 +173,18 @@ def plot_reconstruction_error_distribution(
 	"""
 
 	import matplotlib.pyplot as plt
-	import seaborn as sns
+
+	normal_errors = np.concatenate([train_errors, test_errors[y_test == 0]])
+	attack_errors = test_errors[y_test == 1]
 
 	plt.figure(figsize=(10, 6))
-	sns.histplot(train_errors, bins=50, alpha=0.5, label="Train (Normal)", color="blue", stat="density")
-	sns.histplot(test_errors[y_test == 0], bins=50, alpha=0.5, label="Test Normal", color="green", stat="density")
-	sns.histplot(test_errors[y_test == 1], bins=50, alpha=0.5, label="Test Anomaly", color="red", stat="density")
-	plt.axvline(threshold, color="black", linestyle="--", linewidth=2, label=f"Threshold ({threshold:.4f})")
-	plt.xlabel("Reconstruction Error (MSE)")
-	plt.ylabel("Density")
-	plt.title("Reconstruction Error Distribution")
+	plt.hist(normal_errors, bins=50, alpha=0.6, label="Normal Traffic", color="#1f77b4")
+	plt.hist(attack_errors, bins=50, alpha=0.6, label="Attack Traffic", color="#ff7f0e")
+	plt.axvline(threshold, color="#1f4e8c", linestyle="--", linewidth=2, label=f"Threshold = {threshold:.4f}")
+	plt.xlabel("Reconstruction Error (MSE, log scale)")
+	plt.ylabel("Number of Samples")
+	plt.xscale("log")
+	plt.title("Reconstruction Error Distribution: Normal vs Attack Traffic")
 	plt.legend()
 	plt.grid(True, alpha=0.3)
 	plt.tight_layout()
@@ -329,7 +335,6 @@ def plot_reconstruction_error_distribution_comparison(
 	"""
 
 	import matplotlib.pyplot as plt
-	import seaborn as sns
 
 	n_rows, n_cols = _grid_shape(len(model_errors))
 	fig, axes = plt.subplots(n_rows, n_cols, figsize=(7 * n_cols, 5 * n_rows), squeeze=False)
@@ -341,12 +346,15 @@ def plot_reconstruction_error_distribution_comparison(
 		y_test = data["y_test"]
 		threshold = data["threshold"]
 
-		sns.histplot(train_errors, bins=50, alpha=0.5, label="Train (Normal)", color="blue", stat="density", ax=ax)
-		sns.histplot(test_errors[y_test == 0], bins=50, alpha=0.5, label="Test Normal", color="green", stat="density", ax=ax)
-		sns.histplot(test_errors[y_test == 1], bins=50, alpha=0.5, label="Test Anomaly", color="red", stat="density", ax=ax)
-		ax.axvline(threshold, color="black", linestyle="--", linewidth=2, label=f"Threshold ({threshold:.4f})")
-		ax.set_xlabel("Reconstruction Error (MSE)")
-		ax.set_ylabel("Density")
+		normal_errors = np.concatenate([train_errors, test_errors[y_test == 0]])
+		attack_errors = test_errors[y_test == 1]
+
+		ax.hist(normal_errors, bins=50, alpha=0.6, label="Normal Traffic", color="#1f77b4")
+		ax.hist(attack_errors, bins=50, alpha=0.6, label="Attack Traffic", color="#ff7f0e")
+		ax.axvline(threshold, color="#1f4e8c", linestyle="--", linewidth=2, label=f"Threshold = {threshold:.4f}")
+		ax.set_xscale("log")
+		ax.set_xlabel("Reconstruction Error (MSE, log scale)")
+		ax.set_ylabel("Number of Samples")
 		ax.set_title(str(model_name))
 		ax.legend(fontsize=8)
 		ax.grid(True, alpha=0.3)
@@ -354,7 +362,7 @@ def plot_reconstruction_error_distribution_comparison(
 	for ax in axes_flat[len(model_errors):]:
 		ax.axis("off")
 
-	fig.suptitle("Reconstruction Error Distribution by Model", fontsize=14)
+	fig.suptitle("Reconstruction Error Distribution: Normal vs Attack Traffic", fontsize=14)
 	fig.tight_layout()
 
 	if save_path is not None:
