@@ -63,9 +63,3 @@
 - `dst_host_srv_serror_rate` - SYN error rate for the same service on the destination host
 - `dst_host_rerror_rate` - REJ error rate on the destination host
 - `dst_host_srv_rerror_rate` - REJ error rate for the same service on the destination host
-
-## Notes for EDA
-- The raw file does not include headers, so notebooks and scripts must initialize the full column list from `kddcup.names`.
-- Most of the columns are numeric, but `protocol_type`, `service`, and `flag` are categorical.
-- The label distribution is highly imbalanced, which is expected for intrusion detection tasks.
-- Some features, such as `num_outbound_cmds`, are known candidates for zero-variance filtering in the 10 percent training split.

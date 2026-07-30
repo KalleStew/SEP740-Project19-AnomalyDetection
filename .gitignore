@@ -18,8 +18,9 @@ data/processed/*
 !data/processed/X_test.npy
 !data/processed/y_train.npy
 !data/processed/y_test.npy
+legacy/
+
 results/
-data/models/legacy/
 
 # Jupyter Notebook checkpoints
 .ipynb_checkpoints/
