@@ -1,9 +1,9 @@
 Best Model Parameters:
-latent_dim: 32
-learning_rate: 0.0008844496350335233
+latent_dim: 64
+learning_rate: 0.0005049804820996804
 batch_size: 512
 dropout_rate: 0.0
 n_hidden_layers: 1
 hidden_units: 128
 activation_encoder: leaky_relu
-activation_decoder: relu
+activation_decoder: leaky_relu
