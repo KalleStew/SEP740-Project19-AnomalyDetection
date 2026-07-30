@@ -1,0 +1,7 @@
+Best Model Parameters:
+latent_dim: 64
+learning_rate: 0.0006678810092336423
+batch_size: 512
+dropout_rate: 0.0
+n_hidden_layers: 1
+hidden_units: 64

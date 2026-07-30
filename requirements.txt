@@ -6,3 +6,5 @@ seaborn
 jupyter
 tensorflow
 optuna
+plotly
+joblib
